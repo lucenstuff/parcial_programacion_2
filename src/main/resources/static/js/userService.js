@@ -20,9 +20,9 @@ async function getUsers() {
           <td>${user.email}</td>
           <td>${user.phone}</td>
           <td>
-            <button class="btn btn-danger" onclick="deleteUser(${
+            <button class="btn btn-danger btn-circle btn-sm" onclick="deleteUser(${
               user.id
-            })">Delete</button>
+            })"><i class="fas fa-trash"></i></button>
           </td>
         </tr>
       `;
