@@ -1,6 +1,6 @@
 package com.example.parcial.parcial.controller;
 
-import com.example.parcial.parcial.model.UserEntity;
+import com.example.parcial.parcial.model.User;
 import com.example.parcial.parcial.service.UserService;
 import java.util.List;
 import java.util.Optional;
@@ -27,20 +27,20 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/save")
-	public ResponseEntity<UserEntity> save(@RequestBody UserEntity user) {
-		UserEntity savedUser = userService.save(user);
+	public ResponseEntity<User> save(@RequestBody User user) {
+		User savedUser = userService.save(user);
 		return ResponseEntity.ok(savedUser);
 	}
 
 	@GetMapping("/all")
-	public ResponseEntity<List<UserEntity>> getAll() {
-		List<UserEntity> userList = userService.getAll();
+	public ResponseEntity<List<User>> getAll() {
+		List<User> userList = userService.getAll();
 		return new ResponseEntity<>(userList, HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<UserEntity> getById(@PathVariable Long id) {
-		Optional<UserEntity> user = userService.getById(id);
+	public ResponseEntity<User> getById(@PathVariable Long id) {
+		Optional<User> user = userService.getById(id);
 		if (user.isPresent()) {
 			return ResponseEntity.ok(user.get());
 		} else {
@@ -48,10 +48,11 @@ public class UserController {
 		}
 	}
 
+
 	@PutMapping("/{id}")
-	public ResponseEntity<UserEntity> update(@PathVariable Long id, @RequestBody UserEntity user) {
+	public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
 		user.setId(id);
-		UserEntity updateduser = userService.update(user);
+		User updateduser = userService.update(user);
 		return ResponseEntity.ok(updateduser);
 	}
 

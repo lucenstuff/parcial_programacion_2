@@ -39,16 +39,20 @@ async function getUsers() {
 
 async function deleteUser(id) {
   try {
-    const request = await fetch(`http://localhost:8080/api/users/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!request.ok) {
-      throw new Error(`HTTP error! status: ${request.status}`);
+    const delete_confirmation = confirm("Are you sure you want to delete?");
+    if (delete_confirmation) {
+      const request = await fetch(`http://localhost:8080/api/users/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!request.ok) {
+        throw new Error(`HTTP error! status: ${request.status}`);
+      }
+      getUsers();
     }
-    getUsers();
   } catch (error) {
     console.error("Error deleting user:", error);
   }
