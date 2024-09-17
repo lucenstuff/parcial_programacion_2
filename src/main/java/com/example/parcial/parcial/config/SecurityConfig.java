@@ -1,7 +1,8 @@
-package com.irojas.demojwt.Config;
+package com.example.parcial.parcial.config;
 
-import com.irojas.demojwt.Jwt.JwtAuthenticationFilter;
+import com.example.parcial.parcial.Jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,8 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-	private final AuthenticationProvider authProvider;
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
+	
+	@Autowired
+	private AuthenticationProvider authProvider;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
