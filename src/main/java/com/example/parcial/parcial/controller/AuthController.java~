@@ -33,7 +33,7 @@ public class AuthController {
 	@PostMapping("/register")
 	public String register(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		user.setRoles("ROLE_USER");
+		user.setRole("ROLE_USER");
 		userRepository.save(user);
 		return "redirect:/login";
 	}
