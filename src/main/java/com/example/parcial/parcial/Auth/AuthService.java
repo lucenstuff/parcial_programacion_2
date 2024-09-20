@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class AuthService {
 				new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		User user = userRepository.findByEmail(request.getEmail())
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
-		String token = jwtService.getToken(user);
+		String token = jwtService.getToken((UserDetails) user);
 		return AuthResponse.builder()
 				.token(token)
 				.build();
@@ -43,16 +44,15 @@ public class AuthService {
 		User user = User.builder()
 				.email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword()))
-				.firstname(request.getFirstname())
-				.lastname(request.getLastname())
-				.country(request.getCountry())
+				.name(request.getFirstName())
+				.lastName(request.getLastName())
 				.role(Role.USER)
 				.build();
 
 		userRepository.save(user);
 
 		return AuthResponse.builder()
-				.token(jwtService.getToken(user))
+				.token(jwtService.getToken((UserDetails) user))
 				.build();
 	}
 }

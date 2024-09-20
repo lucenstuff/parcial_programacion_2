@@ -40,8 +40,8 @@ public class ApplicationConfig {
 
 	@Bean
 	public UserDetailsService userDetailService() {
-		return username -> userRepository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("User not fournd"));
+		return email -> (org.springframework.security.core.userdetails.UserDetails) userRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 	}
 
 }
