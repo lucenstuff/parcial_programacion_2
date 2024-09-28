@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-	private static final String SECRET_KEY = "c4101e05e78781b0025bae38ebdd76c437ae570197c4ade4aa90debcda69b5988034fdc2b276130141ec0470b5677fc5";
+	private static final String SECRET_KEY = "c4101e05e78781b0025bae38ebdd76c437ae570197c4ade4aa90debcda69b5988034fdc2b276130141ec0470b5677f";
 
 	public String getToken(UserDetails user) {
 		return getToken(new HashMap<>(), user);
@@ -29,7 +29,7 @@ public class JwtService {
 				.setClaims(extraClaims)
 				.setSubject(user.getUsername())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 3600 * 24))
 				.signWith(getKey(), SignatureAlgorithm.HS256)
 				.compact();
 	}
@@ -62,7 +62,7 @@ public class JwtService {
 		return claimsResolver.apply(claims);
 	}
 
-	private Date getExpiration(String token) {
+	public Date getExpiration(String token) {
 		return getClaim(token, Claims::getExpiration);
 	}
 

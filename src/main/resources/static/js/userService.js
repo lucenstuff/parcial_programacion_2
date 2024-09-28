@@ -7,7 +7,7 @@ async function getUsers() {
       },
     });
     if (!request.ok) {
-      throw new Error(`HTTP error! status: ${request.status}`);
+      throw new Error(`HTTP error! status: ${request.status}`);                                 
     }
     const users = await request.json();
 
@@ -34,6 +34,23 @@ async function getUsers() {
     return users;
   } catch (error) {
     console.error("Error fetching users:", error);
+  }
+}
+
+async function register() {
+  try {
+    const request = await fetch("http://localhost:80808/api/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!request.ok) {
+      throw new Error(`HTTP error! status: ${request.status}`);
+    }         
+    getUsers();
+  } catch (error) {
+    console.error("Error registering user:", error);
   }
 }
 
