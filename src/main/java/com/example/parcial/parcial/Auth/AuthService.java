@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,24 +24,25 @@ public class AuthService {
 
 	public ResponseEntity<AuthResponse> login(LoginRequest request) {
 		try {
-			User user = userRepository.findByEmail(request.getEmail())
-					.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(
+							request.getEmail(),
+							request.getPassword()
+					)
+			);
 
-			if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-						.body(createAuthResponse(null, "Invalid password", "error", null));
-			}
-
+			User user = (User) authentication.getPrincipal();
 			String token = jwtService.getToken(user);
 			Long expiresIn = jwtService.getExpiration(token).getTime();
 
 			return ResponseEntity.ok(
 					createAuthResponse(token, "User logged in successfully", "success", expiresIn));
-		} catch (UsernameNotFoundException e) {
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 					.body(createAuthResponse(null, e.getMessage(), "error", null));
 		}
 	}
+	
 
 	public ResponseEntity<AuthResponse> register(RegisterRequest request) {
 		if (userRepository.existsByEmail(request.getEmail())) {
@@ -62,6 +64,7 @@ public class AuthService {
 		userRepository.save(user);
 		String token = jwtService.getToken(user);
 		Long expiresIn = jwtService.getExpiration(token).getTime();
+
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(createAuthResponse(token, "User registered successfully", "success", expiresIn));
 	}

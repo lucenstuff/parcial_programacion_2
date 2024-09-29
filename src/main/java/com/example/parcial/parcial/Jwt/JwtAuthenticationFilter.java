@@ -1,6 +1,5 @@
 package com.example.parcial.parcial.Jwt;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-			FilterChain filterChain)
-			throws ServletException, IOException {
+			FilterChain filterChain) throws ServletException, IOException {
 
 		final String token = getTokenFromRequest(request);
 		final String username;
@@ -49,23 +47,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						userDetails.getAuthorities());
 
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 			}
-
 		}
 
 		filterChain.doFilter(request, response);
 	}
 
 	private String getTokenFromRequest(HttpServletRequest request) {
+		
+		// Check if token is in the Authorization header
 		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
 		if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
 			return authHeader.substring(7);
 		}
+
+		// Check if token is in cookies
+		final String cookieToken = getCookieValue(request, "authToken");
+		if (StringUtils.hasText(cookieToken)) {
+			return cookieToken;
+		}
+
 		return null;
 	}
 
-
+	// Helper method to get cookie value by name
+	private String getCookieValue(HttpServletRequest request, String cookieName) {
+		if (request.getCookies() != null) {
+			for (var cookie : request.getCookies()) {
+				if (cookieName.equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
+	}
 }
+
