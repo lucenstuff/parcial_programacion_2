@@ -37,6 +37,8 @@ async function getUsers() {
   }
 }
 
+
+
 async function deleteUser(id) {
   try {
     const delete_confirmation = confirm("Are you sure you want to delete?");

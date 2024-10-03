@@ -12,12 +12,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
-  if (loginForm) {
+  if (registerForm) {
     registerForm.addEventListener("submit", function (event) {
       event.preventDefault();
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
       const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
       const password = document.getElementById("password").value;
-      signIn(email, password);
+      const repeatPassword = document.getElementById("repeatPassword").value;
+
+      if (password !== repeatPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      signUp(email, password, firstName, lastName, phone);
     });
   }
 });
@@ -39,7 +49,7 @@ function saveTokenToCookie(token, days) {
 
 async function signOut() {
   try {
-    const token = localStorage.getItem("authToken");
+    const token = sessionStorage.getItem("authToken");
     const response = await fetch("http://localhost:8080/api/auth/logout", {
       method: "POST",
       headers: {
@@ -56,7 +66,6 @@ async function signOut() {
 
     deleteTokenCookie();
     sessionStorage.removeItem("authToken");
-    localStorage.removeItem("authToken");
     window.location.href = "/";
   } catch (error) {
     console.error("Error during logout:", error);
@@ -115,11 +124,11 @@ async function signUp(email, password, firstName, lastName, phone) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-        phone: phone,
+        email,
+        password,
+        firstName,
+        lastName,
+        phone,
       }),
     });
 
@@ -131,12 +140,14 @@ async function signUp(email, password, firstName, lastName, phone) {
       console.log("Expires In", new Date(data.expiresIn));
 
       saveTokenToCookie(data.token, 1);
+      localStorage.setItem("authToken", data.token);
+      window.location.href = "/";
     } else {
       console.error("Failed to register:", data.message);
+      alert("Registration failed: " + data.message);
     }
-
-    console.log("Successfully signed up:", data);
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error during registration:", error);
+    alert("An error occurred during registration. Please try again.");
   }
 }
