@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 public class JwtService {
 
 	private static final String SECRET_KEY = "c4101e05e78781b0025bae38ebdd76c437ae570197c4ade4aa90debcda69b5988034fdc2b276130141ec0470b5677f";
+	@Autowired
+	private TokenBlacklistService blacklistService;
 
 	public String getToken(UserDetails user) {
 		return getToken(new HashMap<>(), user);
@@ -45,7 +48,9 @@ public class JwtService {
 
 	public boolean isTokenValid(String token, UserDetails userDetails) {
 		final String username = getUsernameFromToken(token);
-		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+		return (username.equals(userDetails.getUsername())
+				&& !isTokenExpired(token)
+				&& !blacklistService.isTokenBlacklisted(token));
 	}
 
 	private Claims getAllClaims(String token) {

@@ -1,13 +1,35 @@
-document.addEventListener("DOMContentLoaded", (event) => {
-  document
-    .getElementById("loginForm")
-    .addEventListener("submit", function (event) {
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", function (event) {
       event.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       signIn(email, password);
     });
-  });
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const registerForm = document.getElementById("registerForm");
+  if (loginForm) {
+    registerForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      signIn(email, password);
+    });
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  document
+    .getElementById("logoutButton")
+    .addEventListener("click", function (event) {
+      event.preventDefault();
+      signOut();
+    });
+});
 
 function saveTokenToCookie(token, days) {
   const date = new Date();
@@ -15,14 +37,35 @@ function saveTokenToCookie(token, days) {
   document.cookie = `authToken=${token};expires=${date.toUTCString()};path=/`;
 }
 
+async function signOut() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch("http://localhost:8080/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Failed to log out:", errorData.message);
+      return;
+    }
+
+    deleteTokenCookie();
+    sessionStorage.removeItem("authToken");
+    localStorage.removeItem("authToken");
+    window.location.href = "/";
+  } catch (error) {
+    console.error("Error during logout:", error);
+  }
+}
+
 function deleteTokenCookie() {
   document.cookie =
     "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-}
-
-async function signOut() {
-  deleteTokenCookie();
-  window.location.href = "/";
 }
 
 async function signIn(email, password) {
@@ -45,6 +88,7 @@ async function signIn(email, password) {
     }
 
     const data = await response.json();
+    sessionStorage.setItem("authToken", data.token);
 
     if (data.status === "success") {
       console.log("Logged in successfully!");
