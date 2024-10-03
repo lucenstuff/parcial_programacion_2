@@ -465,9 +465,9 @@
                   id="userDropdown"
                   role="button"
                 >
-                  <span class="mr-2 d-none d-lg-inline text-gray-600 small"
-                    >Douglas McGee</span
-                  >
+                  <span
+                    class="mr-2 d-none d-lg-inline text-gray-600 small"
+                  ></span>
                   <img
                     class="img-profile rounded-circle"
                     src="img/undraw_profile.svg"
@@ -1035,5 +1035,13 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+
+    <script>
+      const userEmail = sessionStorage.getItem("userEmail");
+      const userNameSpan = document.querySelector(
+        ".mr-2.d-none.d-lg-inline.text-gray-600.small"
+      );
+      userNameSpan.textContent = userEmail;
+    </script>
   </body>
 </html>

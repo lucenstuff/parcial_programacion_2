@@ -64,6 +64,7 @@ async function signOut() {
       return;
     }
 
+    sessionStorage.removeItem("userEmail", email);
     deleteTokenCookie();
     sessionStorage.removeItem("authToken");
     window.location.href = "/";
@@ -103,7 +104,8 @@ async function signIn(email, password) {
       console.log("Logged in successfully!");
       console.log("Token", data.token);
       console.log("Expires In", new Date(data.expiresIn));
-      localStorage.setItem("authToken", data.token);
+      sessionStorage.setItem("authToken", data.token);
+      sessionStorage.setItem("userEmail", email);
       saveTokenToCookie(data.token, 1);
       window.location.href = "/";
     } else {
@@ -135,6 +137,8 @@ async function signUp(email, password, firstName, lastName, phone) {
     const data = await response.json();
 
     if (data.status === "success") {
+      sessionStorage.setItem("userEmail", email);
+
       console.log("Registered successfully!");
       console.log("Token", data.token);
       console.log("Expires In", new Date(data.expiresIn));

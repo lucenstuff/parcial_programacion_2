@@ -648,5 +648,13 @@
       };
     </script>
     <script src="js/demo/datatables-demo.js"></script>
+
+    <script>
+      const userEmail = sessionStorage.getItem("userEmail");
+      const userNameSpan = document.querySelector(
+        ".mr-2.d-none.d-lg-inline.text-gray-600.small"
+      );
+      userNameSpan.textContent = userEmail;
+    </script>
   </body>
 </html>
