@@ -17,30 +17,34 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
+    private static final String SECRET_KEY = "c4101e05e78781b0025bae38ebdd76c437ae570197c4ade4aa90debcda69b5988034fdc2b276130141ec0470b5677f";
 
-	private static final String SECRET_KEY = "c4101e05e78781b0025bae38ebdd76c437ae570197c4ade4aa90debcda69b5988034fdc2b276130141ec0470b5677f";
-	@Autowired
-	private TokenBlacklistService blacklistService;
+    @Autowired
+    private TokenBlacklistService blacklistService;
 
-	public String getToken(UserDetails user) {
-		return getToken(new HashMap<>(), user);
-	}
+    public String getToken(UserDetails user) {
+        return getToken(new HashMap<>(), user);
+    }
 
-	private String getToken(Map<String, Object> extraClaims, UserDetails user) {
-		return Jwts
-				.builder()
-				.setClaims(extraClaims)
-				.setSubject(user.getUsername())
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 3600 * 24))
-				.signWith(getKey(), SignatureAlgorithm.HS256)
-				.compact();
-	}
+    private String getToken(Map<String, Object> extraClaims, UserDetails user) {
+        try {
+            return Jwts.builder()
+                    .setClaims(extraClaims)
+                    .setSubject(user.getUsername())
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + 60 * 10 * 1000)) // 10 minutes
+                    .signWith(getKey(), SignatureAlgorithm.HS256)
+                    .compact();
+        } catch (Exception e) {
+            System.err.println("Error generating JWT: " + e.getMessage());
+            return null;
+        }
+    }
 
-	private Key getKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-		return Keys.hmacShaKeyFor(keyBytes);
-	}
+    private Key getKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
 	public String getUsernameFromToken(String token) {
 		return getClaim(token, Claims::getSubject);
