@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
 document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
   if (registerForm) {
@@ -61,6 +60,7 @@ function saveTokenToCookie(token, days) {
 async function signOut() {
   try {
     const token = sessionStorage.getItem("authToken");
+    deleteTokenCookie();
     const response = await fetch("http://localhost:8080/api/auth/logout", {
       method: "POST",
       headers: {
