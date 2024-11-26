@@ -11,6 +11,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  document
+    .getElementById("logoutButton")
+    .addEventListener("click", function (event) {
+      event.preventDefault();
+      signOut();
+      window.location.href = "/login.html";
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
   if (registerForm) {
     registerForm.addEventListener("submit", function (event) {
